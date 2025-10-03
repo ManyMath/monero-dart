@@ -1,12 +1,15 @@
-name: MoneroRustBindings
+# Run with `dart run ffigen --config ffigen.yaml`.
+name: MoneroBindings
 description: |
-  Bindings for `monero-rust`.  See the README for how to use this file.
-output: 'lib/src/monero-rust_bindings_generated.dart'
+  Bindings for `src/monero.h`.
+
+  Regenerate bindings with `dart run ffigen --config ffigen.yaml`.
+output: 'lib/monero_bindings_generated.dart'
 headers:
   entry-points:
-    - 'monero-rust/monero-rust.h'
+    - 'src/monero.h'
   include-directives:
-    - 'monero-rust/monero-rust.h'
+    - 'src/monero.h'
 preamble: |
   // ignore_for_file: always_specify_types
   // ignore_for_file: camel_case_types
