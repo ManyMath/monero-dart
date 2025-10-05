@@ -1,9 +1,20 @@
 ## 0.0.6
 
-- Migrated from native_toolchain_rust to cargokit for Android/iOS support.
-- Fixed Android build: resolved OpenSSL dependency issue by using rustls-tls in monero-serai-mirror.
-- Added Cargo [replace] directive to use local serai-mirror with Android-compatible TLS backend.
-- Requires serai-mirror at `../serai-mirror` with `fix/android-serai` branch for Android builds.
+- Migrated from native_toolchain_rust to cargokit, breaking web platform access.
+- Completely removed monero-serai-mirror dependency.
+  - Replaced with monero-seed from https://github.com/ManyMath/monero-wallet-util.
+  - Vendored as git submodule in monero-rust/vendored/monero-wallet-util.
+  - No more serai-mirror directory required.
+- Vendored monero-oxide as git submodule in monero-rust/vendored/monero-oxide.
+  - All path dependencies now properly contained within monero-dart repository.
+  - No more workspace-level dependency references.
+- Removed unnecessary feature gates (serai-seed/mnemonic).
+  - Mnemonic support is now unconditionally included.
+  - Simplified codebase with no conditional compilation for seed functionality.
+- Added missing `free_string` FFI function for proper C string memory management.
+- Added `rlib` crate type to monero-rust for Rust-to-Rust dependencies.
+- Fixed Language enum: `EnglishOld` → `DeprecatedEnglish`.
+- Added helper function `seed_from_string()` that auto-detects mnemonic language (tries all 13 supported languages).
 
 ## 0.0.5
 

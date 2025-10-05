@@ -8,7 +8,7 @@ crate-type = ["staticlib", "cdylib"]
 
 [dependencies]
 # Use the monero-rust wrapper crate as a path dependency.
-monero-rust = { path = "../../monero-rust", default-features = false, features = ["examples", "use_serai_mnemonic"] }
+monero_rust = { package = "monero-rust", path = "../monero-rust", default-features = false }
 # Force reqwest to use rustls to avoid OpenSSL issues on Android.
 reqwest = { version = "0.11.27", default-features = false, features = ["json", "rustls-tls"] }
 
