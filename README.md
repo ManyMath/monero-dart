@@ -1,53 +1,47 @@
 # `monero`
-## Library
-This is a library for using Monero in Dart.  It uses `monero-rust`, whose cargo 
-build is integrated into the Dart build process by 
-[`native_toolchain_rust`](https://pub.dev/packages/native_toolchain_rust).
-
-## Commandline interface (CLI)
-The `bin` folder contains a tool for setting up the latest Monero release by 
-either building it from source (by default) and/or downloading and verifying 
-binary release archives.  This tool is separate from the library and its use 
-is optional.  Its purpose is to set up a Monero node and (optionally) a wallet 
-RPC server for testing and developing the library.  It can be installed as in:
-```
-dart pub global activate monero
-```
-
-and used it as in:
-```
-monero --help
-```
+This is a library for using Monero in Dart.  It uses `monero-rust`, whose cargo
+build is integrated into the Dart build process by
+[cargokit](https://github.com/irondash/cargokit).
 
 ## Setup
-### Dart 3.6
-The library requires Dart 3.6 for its native assets feature.
+### Dependencies
 
-### Native assets
-Native assets is currently an experimental feature that is available in 
-Flutter's `master` branch behind an optional Flutter config.  Enable it as in: 
-```
-flutter config --enable-native-assets
-```
+#### Version Requirements
+- **Dart SDK**: ^3.10.0-162.1.beta
+- **Flutter**: >=3.3.0 (tested with 3.37.0-0.1.pre beta)
+- **Rust**: 1.75+ (tested with 1.90.0)
 
-See [this tracking issue](https://github.com/flutter/flutter/issues/129757) and 
-[this milestone](https://github.com/dart-lang/native/milestone/15) for the 
-eventual inclusion of native assets in a release.
+#### Repository Dependencies
+This library requires the following sibling repositories for building:
+
+1. **monero-rust** - Must be located at `../monero-rust` relative to this project.
+2. **serai-mirror** - Must be located at `../serai-mirror` relative to this project.
+   - **Important for Android builds**: Must be on the `fix/android-serai` branch.
+   - This branch contains a patch to use rustls-tls instead of native-tls for Android compatibility.
+   - The Rust build uses a `[replace]` directive to substitute the published monero-serai-mirror with this local version.
+
+Directory structure:
+```
+parent-dir/
+├── monero-dart-cargokit/       (this project)
+├── monero-rust/                (required)
+└── serai-mirror/               (required, branch: fix/android-serai)
+```
 
 ### Quick start
-With Dart ^3.6 installed and set as the default:
 ```
-git clone git@github.com:ManyMath/monerodart
-cd monerodart
-dart pub get
-dart --enable-experiment=native-assets run example/monero.dart
+git clone git@github.com:ManyMath/monero-dart
+git clone git@github.com:ManyMath/monero-rust
+git clone -b fix/android-serai git@github.com:ManyMath/serai-mirror
+cd monero-dart/example
+flutter pub get
+flutter run -d <device>
 ```
-and wait a moment as the native assets are built.
 
 ## Development
 - To generate `monero-rust_bindings_generated.dart` Dart bindings for C:
   ```
-  dart --enable-experiment=native-assets run ffigen --config ffigen.yaml
+  dart run ffigen --config ffigen.yaml
   ```
 - If bindings are generated for a new (not previously supported/included in 
   `lib/monero_base.dart`) function, a wrapper must be written for it by hand 

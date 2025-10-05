@@ -23,7 +23,7 @@ rootProject.allprojects {
 }
 
 apply plugin: "com.android.library"
-apply from: "../cargokit/gradle/cargokit.gradle"
+apply from: "../cargokit/gradle/plugin.gradle"
 
 android {
     namespace = "com.example.monero"
