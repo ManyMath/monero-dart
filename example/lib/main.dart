@@ -36,17 +36,30 @@ class _MyHomePageState extends State<MyHomePage> {
   String _subaddress = '';
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Run the wallet generation automatically on startup
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _generateWallet();
+    });
+  }
+
   void _generateWallet() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
+      print('=== Starting Monero Wallet Generation ===');
+
       // Generate mnemonic
       final mnemonic = generateMnemonic();
+      print('Generated Mnemonic: $mnemonic');
 
       // Generate primary address
       final primaryAddress = generateAddress(mnemonic);
+      print('Primary Address: $primaryAddress');
 
       // Generate subaddress
       final subaddress = generateAddress(
@@ -54,6 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
         account: 0,
         index: 1,
       );
+      print('Subaddress (0,1): $subaddress');
+
+      print('=== Wallet Generation Complete ===');
 
       setState(() {
         _mnemonic = mnemonic;
@@ -62,6 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _isLoading = false;
       });
     } catch (e) {
+      print('Error during wallet generation: $e');
       setState(() {
         _isLoading = false;
       });
