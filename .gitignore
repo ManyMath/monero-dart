@@ -27,3 +27,15 @@ doc/api/
 rust/target/
 
 .idea/
+
+example/macos/Flutter/ephemeral/flutter_export_environment.sh
+
+example/macos/Flutter/ephemeral/Flutter-Generated.xcconfig
+
+example/windows/flutter/ephemeral/.plugin_symlinks/monero
+
+example/linux/flutter/ephemeral/
+
+example/ios/Flutter/Generated.xcconfig
+
+example/ios/Flutter/flutter_export_environment.sh

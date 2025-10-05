@@ -1,3 +1,10 @@
+## 0.0.6
+
+- Migrated from native_toolchain_rust to cargokit for Android/iOS support.
+- Fixed Android build: resolved OpenSSL dependency issue by using rustls-tls in monero-serai-mirror.
+- Added Cargo [replace] directive to use local serai-mirror with Android-compatible TLS backend.
+- Requires serai-mirror at `../serai-mirror` with `fix/android-serai` branch for Android builds.
+
 ## 0.0.5
 
 - Commandline interface builds Monero from source by default.

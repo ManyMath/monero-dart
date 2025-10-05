@@ -1,0 +1,14 @@
+[package]
+name = "monero"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib", "cdylib"]
+
+[dependencies]
+# Use the monero-rust wrapper crate as a path dependency.
+monero-rust = { path = "../../monero-rust" }
+
+[replace]
+"monero-serai-mirror:0.1.4-alpha" = { path = "../../serai-mirror/coins/monero" }
