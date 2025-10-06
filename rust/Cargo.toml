@@ -8,7 +8,10 @@ crate-type = ["staticlib", "cdylib"]
 
 [dependencies]
 # Use the monero-rust wrapper crate as a path dependency.
-monero-rust = { path = "../../monero-rust" }
+monero_rust = { package = "monero-rust", path = "../monero-rust", default-features = false }
+# Force reqwest to use rustls to avoid OpenSSL issues on Android.
+reqwest = { version = "0.11.27", default-features = false, features = ["json", "rustls-tls"] }
 
-[replace]
-"monero-serai-mirror:0.1.4-alpha" = { path = "../../serai-mirror/coins/monero" }
+[target.'cfg(target_os = "android")'.dependencies]
+# Use vendored OpenSSL for Android to avoid cross-compilation issues.
+openssl = { version = "0.10", features = ["vendored"] }
