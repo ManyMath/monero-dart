@@ -1,6 +1,7 @@
 # `monero`
 This is a library for using Monero in Dart.  It uses `monero-rust`, whose cargo
-build is integrated into the Dart build process by
+build is integrated into the Dart build process by a 
+[fork](https://github.com/ManyMath/cargokit)
 [cargokit](https://github.com/irondash/cargokit).
 
 ## Setup
@@ -50,3 +51,5 @@ flutter run -d <device>
 - If bindings are generated for a new (not previously supported/included in 
   `lib/monero_base.dart`) function, a wrapper must be written for it by hand 
   (see: `generateMnemonic`, `generateAddress`).
+- Cargokit can be updated as in `git subtree pull --prefix cargokit https://github.com/ManyMath/cargokit.git main --squash`.
+- To use irondash/cargokit, `git rm -r cargokit` and `git subtree add --prefix cargokit https://github.com/irondash/cargokit.git main --squash`.

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
@@ -54,7 +52,6 @@ class BuildEnvironment {
   final String? javaHome;
 
   final String? glibcVersion;
-  final String? defaultToolchain;
 
   BuildEnvironment({
     required this.configuration,
@@ -68,7 +65,6 @@ class BuildEnvironment {
     this.androidMinSdkVersion,
     this.javaHome,
     this.glibcVersion,
-    this.defaultToolchain,
   });
 
   static BuildConfiguration parseBuildConfiguration(String value) {
@@ -84,32 +80,6 @@ class BuildEnvironment {
     return buildConfiguration;
   }
 
-  static String? detectDefaultToolchain(String manifestDir) {
-    final toolchainToml =
-        File(path.join(manifestDir, 'rust-toolchain.toml'));
-    if (toolchainToml.existsSync()) {
-      final match = RegExp(r'channel\s*=\s*"([^"]+)"')
-          .firstMatch(toolchainToml.readAsStringSync());
-      if (match != null) {
-        final channel = match.group(1)?.trim();
-        if (channel != null && channel.isNotEmpty) {
-          return channel;
-        }
-      }
-    }
-    final toolchainFile = File(path.join(manifestDir, 'rust-toolchain'));
-    if (toolchainFile.existsSync()) {
-      for (final line in toolchainFile.readAsLinesSync()) {
-        final trimmed = line.trim();
-        if (trimmed.isEmpty || trimmed.startsWith('#')) {
-          continue;
-        }
-        return trimmed.split(RegExp(r'\s+')).first;
-      }
-    }
-    return null;
-  }
-
   static BuildEnvironment fromEnvironment({
     required bool isAndroid,
   }) {
@@ -120,7 +90,6 @@ class BuildEnvironment {
       manifestDir: manifestDir,
     );
     final crateInfo = CrateInfo.load(manifestDir);
-    final defaultToolchain = detectDefaultToolchain(manifestDir);
     return BuildEnvironment(
       configuration: buildConfiguration,
       crateOptions: crateOptions,
@@ -133,7 +102,6 @@ class BuildEnvironment {
       androidMinSdkVersion:
           isAndroid ? int.parse(Environment.minSdkVersion) : null,
       javaHome: isAndroid ? Environment.javaHome : null,
-      defaultToolchain: defaultToolchain,
     );
   }
 }
@@ -168,13 +136,7 @@ class RustBuilder {
   CargoBuildOptions? get _buildOptions =>
       environment.crateOptions.cargo[environment.configuration];
 
-  String get _toolchain {
-    final configured = _buildOptions?.toolchain.name;
-    if (configured != null) {
-      return configured;
-    }
-    return environment.defaultToolchain ?? 'stable';
-  }
+  String get _toolchain => _buildOptions?.toolchain.name ?? 'stable';
 
   /// Returns the path of directory containing build artifacts.
   Future<String> build() async {

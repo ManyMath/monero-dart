@@ -72,4 +72,25 @@ verbose_logging: true
     expect(options.usePrecompiledBinaries, false);
     expect(options.verboseLogging, true);
   });
+
+  test('parseCargokitUserOptions with cache_local_builds', () {
+    const yaml = '''
+use_precompiled_binaries: false
+verbose_logging: true
+cache_local_builds: true
+''';
+    final options = CargokitUserOptions.parse(loadYamlNode(yaml));
+    expect(options.usePrecompiledBinaries, false);
+    expect(options.verboseLogging, true);
+    expect(options.cacheLocalBuilds, true);
+  });
+
+  test('parseCargokitUserOptions defaults cache_local_builds to false', () {
+    const yaml = '''
+use_precompiled_binaries: true
+''';
+    final options = CargokitUserOptions.parse(loadYamlNode(yaml));
+    expect(options.usePrecompiledBinaries, true);
+    expect(options.cacheLocalBuilds, false);
+  });
 }

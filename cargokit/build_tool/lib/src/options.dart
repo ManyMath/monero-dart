@@ -237,11 +237,15 @@ class CargokitUserOptions {
   CargokitUserOptions({
     required this.usePrecompiledBinaries,
     required this.verboseLogging,
+    required this.useLocalPrecompiledBinaries,
+    required this.cacheLocalBuilds,
   });
 
   CargokitUserOptions._()
       : usePrecompiledBinaries = defaultUsePrecompiledBinaries(),
-        verboseLogging = false;
+        verboseLogging = false,
+        useLocalPrecompiledBinaries = false,
+        cacheLocalBuilds = false;
 
   static CargokitUserOptions parse(YamlNode node) {
     if (node is! YamlMap) {
@@ -249,6 +253,8 @@ class CargokitUserOptions {
     }
     bool usePrecompiledBinaries = defaultUsePrecompiledBinaries();
     bool verboseLogging = false;
+    bool useLocalPrecompiledBinaries = false;
+    bool cacheLocalBuilds = false;
 
     for (final entry in node.nodes.entries) {
       if (entry.key case YamlScalar(value: 'use_precompiled_binaries')) {
@@ -267,15 +273,34 @@ class CargokitUserOptions {
         throw SourceSpanException(
             'Invalid value for "verbose_logging". Must be a boolean.',
             entry.value.span);
+      } else if (entry.key
+          case YamlScalar(value: 'use_local_precompiled_binaries')) {
+        if (entry.value case YamlScalar(value: bool value)) {
+          useLocalPrecompiledBinaries = value;
+          continue;
+        }
+        throw SourceSpanException(
+            'Invalid value for "use_local_precompiled_binaries". Must be a boolean.',
+            entry.value.span);
+      } else if (entry.key case YamlScalar(value: 'cache_local_builds')) {
+        if (entry.value case YamlScalar(value: bool value)) {
+          cacheLocalBuilds = value;
+          continue;
+        }
+        throw SourceSpanException(
+            'Invalid value for "cache_local_builds". Must be a boolean.',
+            entry.value.span);
       } else {
         throw SourceSpanException(
-            'Unknown cargokit option type. Must be "use_precompiled_binaries" or "verbose_logging".',
+            'Unknown cargokit option type. Must be "use_precompiled_binaries", "use_local_precompiled_binaries", "cache_local_builds", or "verbose_logging".',
             entry.key.span);
       }
     }
     return CargokitUserOptions(
       usePrecompiledBinaries: usePrecompiledBinaries,
       verboseLogging: verboseLogging,
+      useLocalPrecompiledBinaries: useLocalPrecompiledBinaries,
+      cacheLocalBuilds: cacheLocalBuilds,
     );
   }
 
@@ -303,4 +328,6 @@ class CargokitUserOptions {
 
   final bool usePrecompiledBinaries;
   final bool verboseLogging;
+  final bool useLocalPrecompiledBinaries;
+  final bool cacheLocalBuilds;
 }

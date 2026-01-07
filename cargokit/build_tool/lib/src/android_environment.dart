@@ -147,6 +147,19 @@ class AndroidEnvironment {
     final toolTempDir =
         Platform.environment['CARGOKIT_TOOL_TEMP_DIR'] ?? targetTempDir;
 
+    final sysroot = path.join(
+      ndkPath,
+      'toolchains',
+      'llvm',
+      'prebuilt',
+      hostArch,
+      'sysroot',
+    );
+
+    final bindgenKey = "BINDGEN_EXTRA_CLANG_ARGS_${target.rust}";
+    final bindgenValue =
+        "--sysroot=$sysroot -I${path.join(sysroot, 'usr', 'include', target.rust)}";
+
     return {
       arKey: arValue,
       ccKey: ccValue,
@@ -156,6 +169,7 @@ class AndroidEnvironment {
       ranlibKey: ranlibValue,
       rustFlagsKey: rustFlagsValue,
       linkerKey: selfPath,
+      bindgenKey: bindgenValue,
       // Recognized by main() so we know when we're acting as a wrapper
       '_CARGOKIT_NDK_LINK_TARGET': targetArg,
       '_CARGOKIT_NDK_LINK_CLANG': ccValue,
@@ -186,7 +200,23 @@ class AndroidEnvironment {
     if (rustFlags.isNotEmpty) {
       rustFlags = '$rustFlags\x1f';
     }
-    rustFlags = '$rustFlags-L\x1f$workaroundDir';
+    
+    if (["arm64-v8a", "x86_64"].contains(target.android)) {
+      rustFlags = '$rustFlags-L\x1f$workaroundDir\x1f';
+
+      const pageSizeArgs = [
+        "-C",
+        "link-arg=-Wl,--hash-style=both",
+        "-C",
+        "link-arg=-Wl,-z,max-page-size=16384"
+      ];
+      final pageSizeArgsString = pageSizeArgs.join("\x1f");
+
+      rustFlags = '$rustFlags$pageSizeArgsString';
+    } else {
+      rustFlags = '$rustFlags-L\x1f$workaroundDir';
+    }
+
     return rustFlags;
   }
 }
