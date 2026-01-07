@@ -1,5 +1,14 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+use std::{time::Duration, usize};
+
+#[unsafe(no_mangle)]
+pub extern "C" fn sum(a: usize, b: usize) -> usize {
+    a + b
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn sum_long_running(a: usize, b: usize) -> usize {
+    std::thread::sleep(Duration::from_secs(5));
+    a + b
 }
 
 #[cfg(test)]
@@ -8,7 +17,7 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let result = add(2, 2);
+        let result = sum(2, 2);
         assert_eq!(result, 4);
     }
 }
