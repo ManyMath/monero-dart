@@ -31,4 +31,26 @@ A new Flutter FFI plugin project.
   s.platform = :osx, '10.11'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
+
+  # Start Cargokit:
+  s.source       = { :path => '.' }
+  s.source_files = 'Classes/**/*'
+
+  s.script_phase = {
+    :name => 'Build Rust library',
+    # First argument: relative path to Rust folder, second: Rust library name.
+    :script => 'sh "$PODS_TARGET_SRCROOT/../cargokit/build_pod.sh" ../rust monero_ffi',
+    :execution_position => :before_compile,
+    :input_files => ['${BUILT_PRODUCTS_DIR}/cargokit_phony'],
+    # Let Xcode know the static lib output of this script (for linking).
+    :output_files => ["${BUILT_PRODUCTS_DIR}/libmonero_ffi.a"],
+  }
+  s.pod_target_xcconfig = {
+    'DEFINES_MODULE' => 'YES',
+    # Exclude 32-bit iOS simulator arch which Flutter doesn't support.
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386',
+    # Force-load the Rust static library at link time.
+    'OTHER_LDFLAGS' => '-force_load ${BUILT_PRODUCTS_DIR}/libmonero_ffi.a',
+  }
+  # End Cargokit.
 end
