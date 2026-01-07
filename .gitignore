@@ -24,7 +24,8 @@ doc/api/
 .flutter-plugins
 .flutter-plugins-dependencies
 
-rust/target/
+rust/target/*
+!rust/target/monero_ffi.h
 
 .idea/
 

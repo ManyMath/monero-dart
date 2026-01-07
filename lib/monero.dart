@@ -4,7 +4,7 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'monero_bindings_generated.dart';
+import 'monero_ffi.g.dart';
 
 /// A very short-lived native function.
 ///
@@ -35,7 +35,7 @@ Future<int> sumAsync(int a, int b) async {
 
 const String _libName = 'monero_ffi';
 
-/// The dynamic library in which the symbols for [MoneroBindings] can be found.
+/// The dynamic library in which the symbols for [MoneroFfi] can be found.
 final DynamicLibrary _dylib = () {
   if (Platform.isMacOS || Platform.isIOS) {
     return DynamicLibrary.open('$_libName.framework/$_libName');
@@ -50,7 +50,7 @@ final DynamicLibrary _dylib = () {
 }();
 
 /// The bindings to the native functions in [_dylib].
-final MoneroBindings _bindings = MoneroBindings(_dylib);
+final MoneroFfi _bindings = MoneroFfi(_dylib);
 
 
 /// A request to compute `sum`.
