@@ -33,18 +33,19 @@ Future<int> sumAsync(int a, int b) async {
   return completer.future;
 }
 
-const String _libName = 'monero_ffi';
-
 /// The dynamic library in which the symbols for [MoneroFfi] can be found.
 final DynamicLibrary _dylib = () {
   if (Platform.isMacOS || Platform.isIOS) {
-    return DynamicLibrary.open('$_libName.framework/$_libName');
+    // On macOS/iOS, the framework name is 'monero' (from the podspec).
+    return DynamicLibrary.open('monero.framework/monero');
   }
   if (Platform.isAndroid || Platform.isLinux) {
-    return DynamicLibrary.open('lib$_libName.so');
+    // On Android/Linux, the shared library is named 'libmonero_ffi.so'.
+    return DynamicLibrary.open('libmonero_ffi.so');
   }
   if (Platform.isWindows) {
-    return DynamicLibrary.open('$_libName.dll');
+    // On Windows, the DLL is named 'monero_ffi.dll'.
+    return DynamicLibrary.open('monero_ffi.dll');
   }
   throw UnsupportedError('Unknown platform: ${Platform.operatingSystem}');
 }();
